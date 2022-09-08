@@ -1,9 +1,9 @@
-from django.shortcuts import render, get_object_or_404, redirect
-from .models import Follow, Post, Group, User, Comment
-from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required
-from .forms import PostForm, CommentForm
+from django.core.paginator import Paginator
+from django.shortcuts import get_object_or_404, redirect, render
 
+from .forms import CommentForm, PostForm
+from .models import Comment, Follow, Group, Post, User
 
 FILTER = 10
 

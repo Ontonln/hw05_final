@@ -1,11 +1,13 @@
-from posts.models import Group, Post
-from django.test import TestCase, Client, override_settings
-from django.contrib.auth import get_user_model
-from django.urls import reverse
-from django.core.files.uploadedfile import SimpleUploadedFile
+import shutil
 import tempfile
-from django.conf import settings
 
+from django.conf import settings
+from django.contrib.auth import get_user_model
+from django.core.files.uploadedfile import SimpleUploadedFile
+from django.test import Client, TestCase, override_settings
+from django.urls import reverse
+
+from posts.models import Group, Post
 
 User = get_user_model()
 
@@ -28,6 +30,11 @@ class PostFormsTests(TestCase):
             text='Тестовый пост',
             group=cls.group,
         )
+
+    @classmethod
+    def tearDownClass(cls):
+        shutil.rmtree(TEMP_MEDIA_ROOT, ignore_errors=True)
+        super().tearDownClass()
 
     def setUp(self):
         # Неавторизованный

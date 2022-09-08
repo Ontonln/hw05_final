@@ -1,5 +1,7 @@
-from django.db import models
 from django.contrib.auth import get_user_model
+from django.db import models
+from django.db.models import F, Q
+
 from core.models import CreatedModel
 
 User = get_user_model()
@@ -81,3 +83,14 @@ class Follow(models.Model):
         related_name='following',
         verbose_name='Автор',
     )
+
+    class Meta:
+        verbose_name = 'Подписка'
+        verbose_name_plural = 'Подписки'
+        # Набор уникальных полей
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'author'], name='unique_following'),
+            models.CheckConstraint(
+                check=~Q(author=F('user')), name='self_subscription')
+        ]

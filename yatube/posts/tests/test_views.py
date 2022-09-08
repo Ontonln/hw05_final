@@ -1,12 +1,13 @@
-from posts.models import Group, Post, Comment, Follow
-from django.test import TestCase, Client
-from django.contrib.auth import get_user_model
-from django.urls import reverse
 from django import forms
+from django.contrib.auth import get_user_model
+from django.core.cache import cache
 from django.core.files.uploadedfile import SimpleUploadedFile
+from django.test import Client, TestCase
+from django.urls import reverse
+
+from posts.models import Comment, Follow, Group, Post
 
 from ..views import FILTER
-from django.core.cache import cache
 
 User = get_user_model()
 
@@ -234,11 +235,15 @@ class PostViewsTests(TestCase):
             group=self.group,
             image=self.uploaded,
         )
+        # Запрашиваю главную страницу
+        response = self.authorized_client.get(reverse('posts:index'))
+        # И сохраняю ее
+        cache_responce = response.content
         # Удаляю пост
         test_post.delete()
         # Запрашиваю главную страницу
         response = self.authorized_client.get(reverse('posts:index'))
-        cache_responce = response.content
+        # Сравниваю
         self.assertEqual(cache_responce, response.content)
         # Очищаю кеш
         cache.clear()
